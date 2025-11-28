@@ -11,7 +11,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -19,10 +19,12 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await params;
+
     const { data: invoice, error } = await supabaseAdmin
       .from("invoices")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", id)
       .eq("user_id", userId)
       .single();
 
@@ -88,7 +90,7 @@ Thank you for your business! 🙏`;
         pdf_url: publicUrl || undefined,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", invoice.id);
+      .eq("id", id);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
