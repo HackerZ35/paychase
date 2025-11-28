@@ -82,7 +82,7 @@ ${invoice.description ? `📝 ${invoice.description}\n\n` : ''}${paymentInstruct
 
 Thank you for your business! 🙏`;
 
-    await sendWhatsAppMessage(invoice.client_whatsapp, message, publicUrl);
+    await sendWhatsAppMessage(invoice.client_whatsapp, message, publicUrl || undefined);
 
     await supabaseAdmin
       .from("invoices")
